@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PetopiaFR — Capacités de familier apprivoisables (Horde)</title>
+<meta name="description" content="Guide français des capacités de familier de chasseur apprivoisables dans WoW Classic Anniversary / Burning Crusade, filtré aux zones Horde et neutres, avec un sélecteur de niveau.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐺</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu principal</a>
+
+<header class="masthead">
+  <div class="wrap masthead-row">
+    <div class="masthead-title">
+      <p class="eyebrow">Carnet du traqueur — Horde</p>
+      <h1>Petopia<span class="accent">FR</span></h1>
+      <p class="subtitle">Capacités de familier apprivoisables, traduites en français et filtrées aux zones Horde &amp; neutres — WoW Classic Anniversary / Burning Crusade.</p>
+    </div>
+    <button id="theme-toggle" type="button" class="theme-toggle" aria-pressed="false">
+      <span aria-hidden="true" class="theme-toggle-icon">🌓</span>
+      <span class="theme-toggle-label">Thème&nbsp;: automatique</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="wrap panel level-panel" aria-labelledby="level-heading">
+    <h2 id="level-heading">Ton niveau</h2>
+    <p class="panel-hint">Déplace le curseur (ou tape le chiffre) pour voir quelles capacités tu peux apprendre en apprivoisant une créature à ce niveau, et ce qui arrive dans 1 à 2 niveaux.</p>
+
+    <div class="level-control">
+      <label for="level-range" class="level-label">Niveau du personnage</label>
+      <div class="level-input-row">
+        <input type="range" id="level-range" min="1" max="70" step="1" value="17"
+               aria-describedby="level-output">
+        <input type="number" id="level-number" min="1" max="70" step="1" value="17"
+               aria-label="Niveau du personnage (saisie précise)">
+      </div>
+      <output id="level-output" for="level-range level-number" aria-hidden="false">Niveau 17</output>
+    </div>
+
+    <div id="live-announcer" class="sr-only" aria-live="polite" role="status"></div>
+  </section>
+
+  <section class="wrap results" aria-labelledby="new-heading">
+    <h2 id="new-heading">Nouveau à ce niveau</h2>
+    <p id="new-empty" class="empty-note" hidden>Aucune nouvelle capacité de familier ne s'ouvre exactement à ce niveau. Regarde « Déjà apprivoisable » et « Bientôt » ci-dessous.</p>
+    <ul id="new-list" class="card-grid" aria-label="Capacités qui s'ouvrent exactement à ce niveau"></ul>
+  </section>
+
+  <section class="wrap results" aria-labelledby="soon-heading">
+    <h2 id="soon-heading">Bientôt <span class="heading-sub">(dans 1 à 2 niveaux)</span></h2>
+    <p id="soon-empty" class="empty-note" hidden>Rien de nouveau ne s'ouvre dans les 2 prochains niveaux.</p>
+    <ul id="soon-list" class="card-grid" aria-label="Capacités qui s'ouvrent dans 1 à 2 niveaux"></ul>
+  </section>
+
+  <section class="wrap results" aria-labelledby="known-heading">
+    <h2 id="known-heading">Déjà apprivoisable <span class="heading-sub">(meilleur rang actuel de chaque capacité)</span></h2>
+    <ul id="known-list" class="card-grid" aria-label="Meilleur rang déjà accessible pour chaque capacité"></ul>
+  </section>
+
+  <section class="wrap reference" aria-labelledby="ref-heading">
+    <h2 id="ref-heading">Référence complète</h2>
+    <p class="panel-hint">Toutes les capacités apprivoisables, tous rangs confondus, classées par ordre alphabétique. Chaque capacité est un menu dépliable.</p>
+    <div id="reference-list" class="reference-list"></div>
+  </section>
+
+  <section class="wrap panel note-panel" aria-labelledby="notes-heading">
+    <h2 id="notes-heading">Notes</h2>
+    <ul class="notes">
+      <li>Les zones sont marquées <span class="tag tag-horde">Horde</span> (contrôlée par la Horde, sans danger de garde ennemie) ou <span class="tag tag-neutre">Neutre</span> (zone contestée, accessible aux deux factions).</li>
+      <li>Les zones exclusivement Alliance (Forêt d'Elwynn, Dun Morogh, Teldrassil, Marche de l'Ouest, Loch Modan, Les Paluns, Bois de la Pénombre, Azuremyst/Bloodmyst…) ne sont volontairement pas listées.</li>
+      <li>Les noms de créatures sont gardés en anglais : ce sont des noms propres, tels qu'affichés dans les bases de données de référence (Wowhead, Petopia) — pas de traduction non vérifiée qui risquerait d'induire en erreur.</li>
+      <li>Les capacités universelles enseignées par n'importe quel dresseur de familier (Grondement, Endurance phénoménale, Armure naturelle, les 5 résistances, Esquive, Réflexes de cobra) ne sont pas listées : elles ne nécessitent pas d'apprivoiser une créature précise.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="wrap site-footer">
+  <p>Site personnel, non affilié à Blizzard Entertainment. World of Warcraft est une marque de Blizzard Entertainment, Inc.</p>
+  <p>Données compilées et traduites depuis <a href="https://www.wow-petopia.com/classic_bc/abilities.php">wow-petopia.com</a> et le <a href="https://www.tentonhammer.com/guides/wow-hunter-guide-pet-skill-guide">Ten Ton Hammer Hunter Pet Skill Guide</a>.</p>
+  <p><a href="https://github.com/ZenqFR/petopiafr">Code source sur GitHub</a> · fait par ZenqFR</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
