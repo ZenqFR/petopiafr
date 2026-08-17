@@ -21,10 +21,20 @@
     return `<span class="tag ${cls}">${faction}</span>`;
   }
 
+  function creatureNameHtml(s) {
+    if (s.noFr) {
+      return `<span class="npc">${s.n}</span> <span class="nofr" title="Aucune fiche française exploitable trouvée sur Wowhead pour ce PNJ">(trad. FR indisponible)</span>`;
+    }
+    if (s.en) {
+      return `<span class="npc">${s.n}</span> <span class="en-orig">(${s.en})</span>`;
+    }
+    return `<span class="npc">${s.n}</span>`;
+  }
+
   function sourceListHtml(sources) {
     if (!sources || !sources.length) return '';
     return `<ul class="source-list">${sources.map(s =>
-      `<li>${tagHtml(s.f)} <span class="npc">${s.n}</span> <span class="zone">— ${s.z}</span></li>`
+      `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">niv. ${s.mob}</span> <span class="zone">— ${s.z}</span></li>`
     ).join('')}</ul>`;
   }
 
@@ -35,6 +45,8 @@
       <h3>${ability.nameFr} <span class="heading-sub">(${ability.nameEn})</span></h3>
       <p class="rank-line">Rang ${rank.r} — niveau ${rank.lvl}</p>
       <p class="desc">${ability.desc}</p>
+      <p class="families-line"><span class="families-label">Familles pouvant apprendre :</span> ${ability.families}</p>
+      <p class="src-label">Créature à apprivoiser pour l'obtenir :</p>
       ${sourceListHtml(rank.src)}
       ${noteHtml}
     </li>`;
@@ -105,7 +117,7 @@
   function rankTableHtml(ability) {
     const rows = ability.ranks.map(rank => {
       const srcCell = rank.src && rank.src.length
-        ? `<ul>${rank.src.map(s => `<li>${tagHtml(s.f)} <span class="npc">${s.n}</span> — ${s.z}</li>`).join('')}</ul>`
+        ? `<ul>${rank.src.map(s => `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">niv. ${s.mob}</span> — ${s.z}</li>`).join('')}</ul>`
         : `<em>${rank.note || 'Aucune source Horde/Neutre connue.'}</em>`;
       const noteRow = rank.note && rank.src && rank.src.length ? `<div class="note">${rank.note}</div>` : '';
       return `<tr>
@@ -115,8 +127,8 @@
       </tr>`;
     }).join('');
     return `<div class="rank-table-wrap"><table class="rank-table">
-      <caption>Tous les rangs de ${ability.nameFr}, sources Horde et neutres</caption>
-      <thead><tr><th scope="col">Rang</th><th scope="col">Niveau</th><th scope="col">Créature à apprivoiser (zone)</th></tr></thead>
+      <caption>Tous les rangs de ${ability.nameFr} — niveau du familier requis, et créature à apprivoiser (avec son propre niveau) pour l'apprendre, sources Horde et neutres</caption>
+      <thead><tr><th scope="col">Rang</th><th scope="col">Niveau requis</th><th scope="col">Créature à apprivoiser (niveau, zone)</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
   }
@@ -126,7 +138,7 @@
     referenceEl.innerHTML = sorted.map(ability => `
       <details class="ref-item">
         <summary>
-          <span>${ability.nameFr} <span class="fam">(${ability.nameEn}) — ${ability.families}</span></span>
+          <span>${ability.nameFr} <span class="fam">(${ability.nameEn}) — familles : ${ability.families}</span></span>
           <span class="chevron" aria-hidden="true">▶</span>
         </summary>
         <div class="ref-body">
