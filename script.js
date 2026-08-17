@@ -15,15 +15,36 @@
   const referenceEl = document.getElementById('reference-list');
 
   const SOON_WINDOW = 2;
+  const LANG_KEY = 'petopiafr-lang';
+  const THEME_KEY = 'petopiafr-theme';
+
+  let lang = 'fr';
+
+  function t(key, ...args) {
+    const val = STRINGS[lang][key];
+    return typeof val === 'function' ? val(...args) : val;
+  }
+
+  // ---------- Ability content helpers (language-aware) ----------
+
+  function abilityName(a) { return lang === 'en' ? a.nameEn : a.nameFr; }
+  function abilityOtherName(a) { return lang === 'en' ? a.nameFr : a.nameEn; }
+  function abilityFamilies(a) { return lang === 'en' ? a.familiesEn : a.familiesFr; }
+  function abilityDesc(a) { return lang === 'en' ? a.descEn : a.descFr; }
+  function rankNote(r) { return lang === 'en' ? r.noteEn : r.noteFr; }
 
   function tagHtml(faction) {
     const cls = faction === 'Horde' ? 'tag-horde' : 'tag-neutre';
-    return `<span class="tag ${cls}">${faction}</span>`;
+    return `<span class="tag ${cls}">${FACTION_LABEL[lang][faction]}</span>`;
   }
 
   function creatureNameHtml(s) {
+    if (lang === 'en') {
+      // English is the "native" language for every creature: no fallback tag needed.
+      return `<span class="npc">${s.en || s.n}</span>`;
+    }
     if (s.noFr) {
-      return `<span class="npc">${s.n}</span> <span class="nofr" title="Aucune fiche française exploitable trouvée sur Wowhead pour ce PNJ">(trad. FR indisponible)</span>`;
+      return `<span class="npc">${s.n}</span> <span class="nofr" title="Aucune fiche française exploitable trouvée pour ce PNJ">${t('noFrTag')}</span>`;
     }
     if (s.en) {
       return `<span class="npc">${s.n}</span> <span class="en-orig">(${s.en})</span>`;
@@ -34,19 +55,20 @@
   function sourceListHtml(sources) {
     if (!sources || !sources.length) return '';
     return `<ul class="source-list">${sources.map(s =>
-      `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">niv. ${s.mob}</span> <span class="zone">— ${s.z}</span></li>`
+      `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">${t('mobLvlPrefix')} ${mobLevelText(s.mob, lang)}</span> <span class="zone">— ${zoneName(s.z, lang)}</span></li>`
     ).join('')}</ul>`;
   }
 
   function cardHtml(ability, rank, variant) {
     const cls = variant === 'soon' ? 'card is-soon' : 'card';
-    const noteHtml = rank.note ? `<p class="note">${rank.note}</p>` : '';
+    const note = rankNote(rank);
+    const noteHtml = note ? `<p class="note">${note}</p>` : '';
     return `<li class="${cls}">
-      <h3>${ability.nameFr} <span class="heading-sub">(${ability.nameEn})</span></h3>
-      <p class="rank-line">Rang ${rank.r} — niveau ${rank.lvl}</p>
-      <p class="desc">${ability.desc}</p>
-      <p class="families-line"><span class="families-label">Familles pouvant apprendre :</span> ${ability.families}</p>
-      <p class="src-label">Créature à apprivoiser pour l'obtenir :</p>
+      <h3>${abilityName(ability)} <span class="heading-sub">(${abilityOtherName(ability)})</span></h3>
+      <p class="rank-line">${t('rankLine', rank.r, rank.lvl)}</p>
+      <p class="desc">${abilityDesc(ability)}</p>
+      <p class="families-line"><span class="families-label">${t('familiesLabel')}</span> ${abilityFamilies(ability)}</p>
+      <p class="src-label">${t('srcLabel')}</p>
       ${sourceListHtml(rank.src)}
       ${noteHtml}
     </li>`;
@@ -90,18 +112,18 @@
 
   function announce(level, counts) {
     const bits = [];
-    if (counts.newCount > 0) bits.push(`${counts.newCount} nouvelle${counts.newCount > 1 ? 's' : ''} capacité${counts.newCount > 1 ? 's' : ''} au niveau ${level}`);
-    if (counts.soonCount > 0) bits.push(`${counts.soonCount} à venir dans les 2 prochains niveaux`);
+    if (counts.newCount > 0) bits.push(`${t('announceNew', counts.newCount)} ${level}`);
+    if (counts.soonCount > 0) bits.push(t('announceSoon', counts.soonCount));
     liveEl.textContent = bits.length
-      ? `Niveau ${level}. ${bits.join('. ')}.`
-      : `Niveau ${level}. Rien de nouveau à ce niveau précis.`;
+      ? `${t('announceLevel', level)} ${bits.join('. ')}.`
+      : `${t('announceLevel', level)} ${t('announceNothing')}`;
   }
 
   function setLevel(level, { announceChange } = { announceChange: false }) {
     level = Math.min(70, Math.max(1, Math.round(level)));
     rangeEl.value = String(level);
     numberEl.value = String(level);
-    outputEl.textContent = `Niveau ${level}`;
+    outputEl.textContent = t('levelOutput', level);
     const counts = render(level);
     if (announceChange) announce(level, counts);
     try { localStorage.setItem('petopiafr-level', String(level)); } catch (e) { /* ignore */ }
@@ -116,10 +138,11 @@
 
   function rankTableHtml(ability) {
     const rows = ability.ranks.map(rank => {
+      const note = rankNote(rank);
       const srcCell = rank.src && rank.src.length
-        ? `<ul>${rank.src.map(s => `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">niv. ${s.mob}</span> — ${s.z}</li>`).join('')}</ul>`
-        : `<em>${rank.note || 'Aucune source Horde/Neutre connue.'}</em>`;
-      const noteRow = rank.note && rank.src && rank.src.length ? `<div class="note">${rank.note}</div>` : '';
+        ? `<ul>${rank.src.map(s => `<li>${tagHtml(s.f)} ${creatureNameHtml(s)} <span class="mob-lvl">${t('mobLvlPrefix')} ${mobLevelText(s.mob, lang)}</span> — ${zoneName(s.z, lang)}</li>`).join('')}</ul>`
+        : `<em>${note || t('noSourceKnown')}</em>`;
+      const noteRow = note && rank.src && rank.src.length ? `<div class="note">${note}</div>` : '';
       return `<tr>
         <td class="num">${rank.r}</td>
         <td class="num">${rank.lvl}</td>
@@ -127,31 +150,41 @@
       </tr>`;
     }).join('');
     return `<div class="rank-table-wrap"><table class="rank-table">
-      <caption>Tous les rangs de ${ability.nameFr} — niveau du familier requis, et créature à apprivoiser (avec son propre niveau) pour l'apprendre, sources Horde et neutres</caption>
-      <thead><tr><th scope="col">Rang</th><th scope="col">Niveau requis</th><th scope="col">Créature à apprivoiser (niveau, zone)</th></tr></thead>
+      <caption>${t('rankTableCaption', abilityName(ability))}</caption>
+      <thead><tr><th scope="col">${t('thRank')}</th><th scope="col">${t('thLevelReq')}</th><th scope="col">${t('thSource')}</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
   }
 
   function buildReference() {
-    const sorted = [...ABILITIES].sort((a, b) => a.nameFr.localeCompare(b.nameFr, 'fr'));
+    const locale = lang === 'en' ? 'en' : 'fr';
+    const sorted = [...ABILITIES].sort((a, b) => abilityName(a).localeCompare(abilityName(b), locale));
     referenceEl.innerHTML = sorted.map(ability => `
       <details class="ref-item">
         <summary>
-          <span>${ability.nameFr} <span class="fam">(${ability.nameEn}) — familles : ${ability.families}</span></span>
+          <span>${abilityName(ability)} <span class="fam">(${abilityOtherName(ability)}) — ${t('refSummaryFamilies')} ${abilityFamilies(ability)}</span></span>
           <span class="chevron" aria-hidden="true">▶</span>
         </summary>
         <div class="ref-body">
-          <p class="desc">${ability.desc}</p>
+          <p class="desc">${abilityDesc(ability)}</p>
           ${rankTableHtml(ability)}
         </div>
       </details>
     `).join('');
   }
 
+  // ---------- Static UI strings ----------
+
+  function applyStaticStrings() {
+    document.documentElement.lang = lang;
+    document.title = t('pageTitle');
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  }
+
   // ---------- Theme toggle ----------
 
-  const THEME_KEY = 'petopiafr-theme';
   const toggleBtn = document.getElementById('theme-toggle');
   const labelEl = toggleBtn.querySelector('.theme-toggle-label');
 
@@ -159,16 +192,18 @@
     if (theme === 'light' || theme === 'dark') {
       document.documentElement.setAttribute('data-theme', theme);
       toggleBtn.setAttribute('aria-pressed', 'true');
-      labelEl.textContent = theme === 'dark' ? 'Thème : sombre' : 'Thème : clair';
+      labelEl.textContent = t(theme === 'dark' ? 'themeDark' : 'themeLight');
     } else {
       document.documentElement.removeAttribute('data-theme');
       toggleBtn.setAttribute('aria-pressed', 'false');
-      labelEl.textContent = 'Thème : automatique';
+      labelEl.textContent = t('themeAuto');
     }
   }
 
+  function currentTheme() { return document.documentElement.getAttribute('data-theme') || null; }
+
   function cycleTheme() {
-    const current = document.documentElement.getAttribute('data-theme');
+    const current = currentTheme();
     const next = current === 'dark' ? 'light' : current === 'light' ? null : 'dark';
     applyTheme(next);
     try {
@@ -179,15 +214,42 @@
 
   toggleBtn.addEventListener('click', cycleTheme);
 
+  // ---------- Language switch ----------
+
+  const langButtons = [...document.querySelectorAll('.lang-btn')];
+
+  function setLang(next, { persist } = { persist: true }) {
+    if (!STRINGS[next]) return; // 'de' has no strings yet — button stays inert
+    lang = next;
+    langButtons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
+    applyStaticStrings();
+    applyTheme(currentTheme()); // refresh theme-toggle label in new language
+    buildReference();
+    setLevel(parseInt(numberEl.value, 10) || 17, { announceChange: false });
+    if (persist) { try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ } }
+  }
+
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.getAttribute('aria-disabled') === 'true') return; // DE: coming soon
+      setLang(btn.dataset.lang);
+    });
+  });
+
   // ---------- Init ----------
 
   let savedTheme = null;
   let savedLevel = null;
+  let savedLang = null;
   try {
     savedTheme = localStorage.getItem(THEME_KEY);
     savedLevel = parseInt(localStorage.getItem('petopiafr-level'), 10);
+    savedLang = localStorage.getItem(LANG_KEY);
   } catch (e) { /* ignore */ }
 
+  lang = (savedLang && STRINGS[savedLang]) ? savedLang : 'fr';
+  langButtons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
+  applyStaticStrings();
   applyTheme(savedTheme);
   buildReference();
   setLevel(Number.isFinite(savedLevel) ? savedLevel : 17, { announceChange: false });

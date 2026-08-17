@@ -12,35 +12,42 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Aller au contenu principal</a>
+<a class="skip-link" href="#main" data-i18n="skipLink">Aller au contenu principal</a>
 
 <header class="masthead">
   <div class="wrap masthead-row">
     <div class="masthead-title">
-      <p class="eyebrow">Carnet du traqueur — Horde</p>
+      <p class="eyebrow" data-i18n="eyebrow">Carnet du traqueur — Horde</p>
       <h1>Petopia<span class="accent">FR</span></h1>
-      <p class="subtitle">Capacités de familier apprivoisables, traduites en français et filtrées aux zones Horde &amp; neutres — WoW Classic Anniversary / Burning Crusade.</p>
+      <p class="subtitle" data-i18n="subtitle">Capacités de familier apprivoisables, traduites en français et filtrées aux zones Horde &amp; neutres — WoW Classic Anniversary / Burning Crusade.</p>
     </div>
-    <button id="theme-toggle" type="button" class="theme-toggle" aria-pressed="false">
-      <span aria-hidden="true" class="theme-toggle-icon">🌓</span>
-      <span class="theme-toggle-label">Thème&nbsp;: automatique</span>
-    </button>
+    <div class="masthead-controls">
+      <div class="lang-switch" role="group" aria-label="Langue / Language / Sprache">
+        <button type="button" class="lang-btn" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <button type="button" class="lang-btn" data-lang="de" aria-pressed="false" aria-disabled="true" title="Deutsch: demnächst verfügbar / bientôt disponible">DE</button>
+      </div>
+      <button id="theme-toggle" type="button" class="theme-toggle" aria-pressed="false">
+        <span aria-hidden="true" class="theme-toggle-icon">🌓</span>
+        <span class="theme-toggle-label" data-i18n="themeAuto">Thème&nbsp;: automatique</span>
+      </button>
+    </div>
   </div>
 </header>
 
 <main id="main">
 
   <section class="wrap panel level-panel" aria-labelledby="level-heading">
-    <h2 id="level-heading">Ton niveau</h2>
-    <p class="panel-hint">Déplace le curseur (ou tape le chiffre) pour voir quelles capacités tu peux apprendre en apprivoisant une créature à ce niveau, et ce qui arrive dans 1 à 2 niveaux.</p>
+    <h2 id="level-heading" data-i18n="levelHeading">Ton niveau</h2>
+    <p class="panel-hint" data-i18n="levelHint">Déplace le curseur (ou tape le chiffre) pour voir quelles capacités tu peux apprendre en apprivoisant une créature à ce niveau, et ce qui arrive dans 1 à 2 niveaux.</p>
 
     <div class="level-control">
-      <label for="level-range" class="level-label">Niveau du personnage</label>
+      <label for="level-range" class="level-label" data-i18n="levelLabel">Niveau du personnage</label>
       <div class="level-input-row">
         <input type="range" id="level-range" min="1" max="70" step="1" value="17"
                aria-describedby="level-output">
         <input type="number" id="level-number" min="1" max="70" step="1" value="17"
-               aria-label="Niveau du personnage (saisie précise)">
+               data-i18n-aria="levelNumberAria" aria-label="Niveau du personnage (saisie précise)">
       </div>
       <output id="level-output" for="level-range level-number" aria-hidden="false">Niveau 17</output>
     </div>
@@ -49,48 +56,49 @@
   </section>
 
   <section class="wrap results" aria-labelledby="new-heading">
-    <h2 id="new-heading">Nouveau à ce niveau</h2>
-    <p id="new-empty" class="empty-note" hidden>Aucune nouvelle capacité de familier ne s'ouvre exactement à ce niveau. Regarde « Déjà apprivoisable » et « Bientôt » ci-dessous.</p>
-    <ul id="new-list" class="card-grid" aria-label="Capacités qui s'ouvrent exactement à ce niveau"></ul>
+    <h2 id="new-heading" data-i18n="newHeading">Nouveau à ce niveau</h2>
+    <p id="new-empty" class="empty-note" hidden data-i18n="newEmpty">Aucune nouvelle capacité de familier ne s'ouvre exactement à ce niveau. Regarde « Déjà apprivoisable » et « Bientôt » ci-dessous.</p>
+    <ul id="new-list" class="card-grid" data-i18n-aria="newListAria" aria-label="Capacités qui s'ouvrent exactement à ce niveau"></ul>
   </section>
 
   <section class="wrap results" aria-labelledby="soon-heading">
-    <h2 id="soon-heading">Bientôt <span class="heading-sub">(dans 1 à 2 niveaux)</span></h2>
-    <p id="soon-empty" class="empty-note" hidden>Rien de nouveau ne s'ouvre dans les 2 prochains niveaux.</p>
-    <ul id="soon-list" class="card-grid" aria-label="Capacités qui s'ouvrent dans 1 à 2 niveaux"></ul>
+    <h2 id="soon-heading"><span data-i18n="soonHeading">Bientôt</span> <span class="heading-sub" data-i18n="soonHeadingSub">(dans 1 à 2 niveaux)</span></h2>
+    <p id="soon-empty" class="empty-note" hidden data-i18n="soonEmpty">Rien de nouveau ne s'ouvre dans les 2 prochains niveaux.</p>
+    <ul id="soon-list" class="card-grid" data-i18n-aria="soonListAria" aria-label="Capacités qui s'ouvrent dans 1 à 2 niveaux"></ul>
   </section>
 
   <section class="wrap results" aria-labelledby="known-heading">
-    <h2 id="known-heading">Déjà apprivoisable <span class="heading-sub">(meilleur rang actuel de chaque capacité)</span></h2>
-    <ul id="known-list" class="card-grid" aria-label="Meilleur rang déjà accessible pour chaque capacité"></ul>
+    <h2 id="known-heading"><span data-i18n="knownHeading">Déjà apprivoisable</span> <span class="heading-sub" data-i18n="knownHeadingSub">(meilleur rang actuel de chaque capacité)</span></h2>
+    <ul id="known-list" class="card-grid" data-i18n-aria="knownListAria" aria-label="Meilleur rang déjà accessible pour chaque capacité"></ul>
   </section>
 
   <section class="wrap reference" aria-labelledby="ref-heading">
-    <h2 id="ref-heading">Référence complète</h2>
-    <p class="panel-hint">Toutes les capacités apprivoisables, tous rangs confondus, classées par ordre alphabétique. Chaque capacité est un menu dépliable.</p>
+    <h2 id="ref-heading" data-i18n="refHeading">Référence complète</h2>
+    <p class="panel-hint" data-i18n="refHint">Toutes les capacités apprivoisables, tous rangs confondus, classées par ordre alphabétique. Chaque capacité est un menu dépliable.</p>
     <div id="reference-list" class="reference-list"></div>
   </section>
 
   <section class="wrap panel note-panel" aria-labelledby="notes-heading">
-    <h2 id="notes-heading">Notes</h2>
+    <h2 id="notes-heading" data-i18n="notesHeading">Notes</h2>
     <ul class="notes">
-      <li>Les zones sont marquées <span class="tag tag-horde">Horde</span> (contrôlée par la Horde, sans danger de garde ennemie) ou <span class="tag tag-neutre">Neutre</span> (zone contestée, accessible aux deux factions).</li>
-      <li>Les zones exclusivement Alliance (Forêt d'Elwynn, Dun Morogh, Teldrassil, Marche de l'Ouest, Loch Modan, Les Paluns, Bois de la Pénombre, Azuremyst/Bloodmyst…) ne sont volontairement pas listées.</li>
-      <li>Chaque créature a été vérifiée sur Wowhead (fiche anglaise puis fiche française du même PNJ) pour un nom français exact. Quand Wowhead ne fournit pas de fiche française exploitable pour un PNJ donné, son nom reste affiché en anglais avec la mention <em>« trad. FR indisponible »</em> plutôt qu'une traduction inventée.</li>
-      <li>Le niveau indiqué à côté de chaque créature (ex. <span class="mob-lvl">niv. 21-22</span>) est celui de la créature elle-même sur Wowhead — pas celui du rang de capacité à apprendre, indiqué séparément.</li>
-      <li>Les capacités universelles enseignées par n'importe quel dresseur de familier (Grondement, Endurance phénoménale, Armure naturelle, les 5 résistances, Esquive, Réflexes de cobra) ne sont pas listées : elles ne nécessitent pas d'apprivoiser une créature précise.</li>
+      <li data-i18n-html="note1">Les zones sont marquées <span class="tag tag-horde">Horde</span> (contrôlée par la Horde, sans danger de garde ennemie) ou <span class="tag tag-neutre">Neutre</span> (zone contestée, accessible aux deux factions).</li>
+      <li data-i18n="note2">Les zones exclusivement Alliance (Forêt d'Elwynn, Dun Morogh, Teldrassil, Marche de l'Ouest, Loch Modan, Les Paluns, Bois de la Pénombre, Azuremyst/Bloodmyst…) ne sont volontairement pas listées.</li>
+      <li data-i18n-html="note3">Chaque créature a été vérifiée sur Wowhead et JudgeHype (fiche anglaise puis fiche française du même PNJ) pour un nom français exact. Quand aucune fiche française exploitable n'existe pour un PNJ donné, son nom reste affiché en anglais avec la mention <em>« trad. FR indisponible »</em> plutôt qu'une traduction inventée.</li>
+      <li data-i18n-html="note4">Le niveau indiqué à côté de chaque créature (ex. <span class="mob-lvl">niv. 21-22</span>) est celui de la créature elle-même sur Wowhead — pas celui du rang de capacité à apprendre, indiqué séparément.</li>
+      <li data-i18n="note5">Les capacités universelles enseignées par n'importe quel dresseur de familier (Grondement, Endurance phénoménale, Armure naturelle, les 5 résistances, Esquive, Réflexes de cobra) ne sont pas listées : elles ne nécessitent pas d'apprivoiser une créature précise.</li>
     </ul>
   </section>
 
 </main>
 
 <footer class="wrap site-footer">
-  <p>Site personnel, non affilié à Blizzard Entertainment. World of Warcraft est une marque de Blizzard Entertainment, Inc.</p>
-  <p>Données compilées et traduites depuis <a href="https://www.wow-petopia.com/classic_bc/abilities.php">wow-petopia.com</a> et le <a href="https://www.tentonhammer.com/guides/wow-hunter-guide-pet-skill-guide">Ten Ton Hammer Hunter Pet Skill Guide</a>.</p>
-  <p><a href="https://github.com/ZenqFR/petopiafr">Code source sur GitHub</a> · fait par ZenqFR</p>
+  <p data-i18n="footer1">Site personnel, non affilié à Blizzard Entertainment. World of Warcraft est une marque de Blizzard Entertainment, Inc.</p>
+  <p data-i18n-html="footer2">Données compilées et traduites depuis <a href="https://www.wow-petopia.com/classic_bc/abilities.php">wow-petopia.com</a>, le <a href="https://www.tentonhammer.com/guides/wow-hunter-guide-pet-skill-guide">Ten Ton Hammer Hunter Pet Skill Guide</a>, <a href="https://www.wowhead.com/">Wowhead</a> et <a href="https://wowclassic.judgehype.com/">JudgeHype</a>.</p>
+  <p data-i18n-html="footer3"><a href="https://github.com/ZenqFR/petopiafr">Code source sur GitHub</a> · fait par ZenqFR</p>
 </footer>
 
 <script src="data.js"></script>
+<script src="i18n.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
