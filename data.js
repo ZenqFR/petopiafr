@@ -64,6 +64,17 @@ function mobLevelText(mob, lang) {
   return mob;
 }
 
+// Zones Horde exclusivement, triées par niveau croissant. `match` teste la
+// chaîne `src.z` d'une source (les zones d'instance type "X (instance, Les
+// Tarides)" retombent dans la zone extérieure qui les contient).
+const ZONES = [
+  { key: 'durotar', nameFr: 'Durotar', nameEn: 'Durotar', lvlFr: '1-11', lvlEn: '1-11', match: (z) => z === 'Durotar' },
+  { key: 'mulgore', nameFr: 'Mulgore', nameEn: 'Mulgore', lvlFr: '1-11', lvlEn: '1-11', match: (z) => z === 'Mulgore' },
+  { key: 'chants-eternels', nameFr: 'Bois des Chants éternels', nameEn: 'Eversong Woods', lvlFr: '1-20', lvlEn: '1-20', match: (z) => z === 'Bois des Chants éternels' },
+  { key: 'pins-argentes', nameFr: 'Forêt des Pins Argentés', nameEn: 'Silverpine Forest', lvlFr: '10-20', lvlEn: '10-20', match: (z) => z === 'Forêt des Pins Argentés' },
+  { key: 'tarides', nameFr: 'Les Tarides', nameEn: 'The Barrens', lvlFr: '10-25', lvlEn: '10-25', match: (z) => z.includes('Les Tarides') },
+];
+
 // Uniquement les capacités qu'on APPREND en apprivoisant une créature qui
 // les connaît déjà. Les capacités universelles enseignées par n'importe
 // quel dresseur de familier (Grondement, Endurance phénoménale, Armure
@@ -322,5 +333,5 @@ const EXCLUDED_TRAINER_ONLY = {
 };
 
 if (typeof module !== 'undefined') {
-  module.exports = { ABILITIES, FACTION, FACTION_LABEL, ZONE_EN, zoneName, mobLevelText, EXCLUDED_TRAINER_ONLY };
+  module.exports = { ABILITIES, FACTION, FACTION_LABEL, ZONE_EN, zoneName, mobLevelText, ZONES, EXCLUDED_TRAINER_ONLY };
 }

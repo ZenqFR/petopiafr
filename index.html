@@ -52,7 +52,18 @@
       <output id="level-output" for="level-range level-number" aria-hidden="false">Niveau 17</output>
     </div>
 
+    <div class="zone-control">
+      <label for="zone-select" class="zone-label" data-i18n="zoneLabel">Zone (Horde)</label>
+      <select id="zone-select"></select>
+      <p class="panel-hint zone-hint" data-i18n="zoneHint">Optionnel : limite l'affichage aux créatures d'une seule zone Horde. Combine-le avec ton niveau, ou laisse le niveau de côté et choisis juste une zone.</p>
+    </div>
+
     <div id="live-announcer" class="sr-only" aria-live="polite" role="status"></div>
+  </section>
+
+  <section class="wrap results" id="zone-section" hidden aria-labelledby="zone-heading">
+    <h2 id="zone-heading"></h2>
+    <ul id="zone-list" class="card-grid" data-i18n-aria="zoneListAria" aria-label="Capacités disponibles dans la zone sélectionnée"></ul>
   </section>
 
   <section class="wrap results" aria-labelledby="new-heading">

@@ -14,11 +14,18 @@
 
   const referenceEl = document.getElementById('reference-list');
 
+  const zoneSelect = document.getElementById('zone-select');
+  const zoneSection = document.getElementById('zone-section');
+  const zoneHeading = document.getElementById('zone-heading');
+  const zoneList = document.getElementById('zone-list');
+
   const SOON_WINDOW = 2;
   const LANG_KEY = 'petopiafr-lang';
   const THEME_KEY = 'petopiafr-theme';
+  const ZONE_KEY = 'petopiafr-zone';
 
   let lang = 'fr';
+  let zoneFilter = 'all';
 
   function t(key, ...args) {
     const val = STRINGS[lang][key];
@@ -74,25 +81,32 @@
     </li>`;
   }
 
-  function bestRankAtOrBefore(ability, level) {
+  function bestRankAtOrBefore(ability, level, zoneObj) {
     let best = null;
     for (const rank of ability.ranks) {
-      if (rank.lvl <= level && (!best || rank.lvl > best.lvl)) best = rank;
+      if (rank.lvl <= level && rankMatchesZone(rank, zoneObj) && (!best || rank.lvl > best.lvl)) best = rank;
     }
     return best;
   }
 
+  function rankMatchesZone(rank, zoneObj) {
+    if (!zoneObj) return true;
+    return (rank.src || []).some(s => zoneObj.match(s.z));
+  }
+
   function render(level) {
+    const zoneObj = zoneFilter === 'all' ? null : ZONES.find(z => z.key === zoneFilter);
     const newItems = [];
     const soonItems = [];
     const knownItems = [];
 
     for (const ability of ABILITIES) {
       for (const rank of ability.ranks) {
+        if (!rankMatchesZone(rank, zoneObj)) continue;
         if (rank.lvl === level) newItems.push({ ability, rank });
         else if (rank.lvl > level && rank.lvl <= level + SOON_WINDOW) soonItems.push({ ability, rank });
       }
-      const best = bestRankAtOrBefore(ability, level);
+      const best = bestRankAtOrBefore(ability, level, zoneObj);
       if (best && best.lvl !== level) knownItems.push({ ability, rank: best });
     }
 
@@ -107,7 +121,27 @@
 
     knownList.innerHTML = knownItems.map(x => cardHtml(x.ability, x.rank, 'known')).join('');
 
+    renderZoneSection(zoneObj);
+
     return { newCount: newItems.length, soonCount: soonItems.length };
+  }
+
+  // Zone-only view: every rank tied to the selected zone, any level,
+  // independent of the level slider — this is the "just pick a zone" mode.
+  function renderZoneSection(zoneObj) {
+    if (!zoneObj) { zoneSection.hidden = true; return; }
+    zoneSection.hidden = false;
+    zoneHeading.textContent = t('zoneSectionHeading', lang === 'en' ? zoneObj.nameEn : zoneObj.nameFr, lang === 'en' ? zoneObj.lvlEn : zoneObj.lvlFr);
+    const items = [];
+    for (const ability of ABILITIES) {
+      for (const rank of ability.ranks) {
+        if (rankMatchesZone(rank, zoneObj)) items.push({ ability, rank });
+      }
+    }
+    items.sort((a, b) => a.rank.lvl - b.rank.lvl);
+    zoneList.innerHTML = items.length
+      ? items.map(x => cardHtml(x.ability, x.rank, 'zone')).join('')
+      : `<li class="empty-note">${t('zoneEmpty')}</li>`;
   }
 
   function announce(level, counts) {
@@ -133,6 +167,32 @@
   rangeEl.addEventListener('change', () => setLevel(rangeEl.value, { announceChange: true }));
   numberEl.addEventListener('input', () => setLevel(numberEl.value || 1, { announceChange: false }));
   numberEl.addEventListener('change', () => setLevel(numberEl.value || 1, { announceChange: true }));
+
+  // ---------- Zone select ----------
+
+  function populateZoneSelect() {
+    const prev = zoneFilter;
+    zoneSelect.innerHTML = [
+      `<option value="all">${t('zoneAllOption')}</option>`,
+      ...ZONES.map(z => {
+        const name = lang === 'en' ? z.nameEn : z.nameFr;
+        const lvl = lang === 'en' ? z.lvlEn : z.lvlFr;
+        return `<option value="${z.key}">${name} (${lang === 'en' ? 'lvl' : 'niv.'} ${lvl})</option>`;
+      }),
+    ].join('');
+    zoneSelect.value = ZONES.some(z => z.key === prev) ? prev : 'all';
+    zoneFilter = zoneSelect.value;
+  }
+
+  zoneSelect.addEventListener('change', () => {
+    zoneFilter = zoneSelect.value;
+    const counts = render(parseInt(numberEl.value, 10) || 1);
+    announce(parseInt(numberEl.value, 10) || 1, counts);
+    try {
+      if (zoneFilter === 'all') localStorage.removeItem(ZONE_KEY);
+      else localStorage.setItem(ZONE_KEY, zoneFilter);
+    } catch (e) { /* ignore */ }
+  });
 
   // ---------- Reference accordion ----------
 
@@ -224,6 +284,7 @@
     langButtons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
     applyStaticStrings();
     applyTheme(currentTheme()); // refresh theme-toggle label in new language
+    populateZoneSelect(); // refresh zone option labels in new language
     buildReference();
     setLevel(parseInt(numberEl.value, 10) || 17, { announceChange: false });
     if (persist) { try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ } }
@@ -241,16 +302,20 @@
   let savedTheme = null;
   let savedLevel = null;
   let savedLang = null;
+  let savedZone = null;
   try {
     savedTheme = localStorage.getItem(THEME_KEY);
     savedLevel = parseInt(localStorage.getItem('petopiafr-level'), 10);
     savedLang = localStorage.getItem(LANG_KEY);
+    savedZone = localStorage.getItem(ZONE_KEY);
   } catch (e) { /* ignore */ }
 
   lang = (savedLang && STRINGS[savedLang]) ? savedLang : 'fr';
   langButtons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
   applyStaticStrings();
   applyTheme(savedTheme);
+  zoneFilter = (savedZone && ZONES.some(z => z.key === savedZone)) ? savedZone : 'all';
+  populateZoneSelect();
   buildReference();
   setLevel(Number.isFinite(savedLevel) ? savedLevel : 17, { announceChange: false });
 })();
