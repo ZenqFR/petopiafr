@@ -131,7 +131,7 @@
   function renderZoneSection(zoneObj) {
     if (!zoneObj) { zoneSection.hidden = true; return; }
     zoneSection.hidden = false;
-    zoneHeading.textContent = t('zoneSectionHeading', lang === 'en' ? zoneObj.nameEn : zoneObj.nameFr, lang === 'en' ? zoneObj.lvlEn : zoneObj.lvlFr);
+    zoneHeading.textContent = t('zoneSectionHeading', zoneDisplayName(zoneObj), zoneObj.lvl);
     const items = [];
     for (const ability of ABILITIES) {
       for (const rank of ability.ranks) {
@@ -170,15 +170,15 @@
 
   // ---------- Zone select ----------
 
+  function zoneDisplayName(z) { return zoneName(z.nameFr, lang); }
+
   function populateZoneSelect() {
     const prev = zoneFilter;
     zoneSelect.innerHTML = [
       `<option value="all">${t('zoneAllOption')}</option>`,
-      ...ZONES.map(z => {
-        const name = lang === 'en' ? z.nameEn : z.nameFr;
-        const lvl = lang === 'en' ? z.lvlEn : z.lvlFr;
-        return `<option value="${z.key}">${name} (${lang === 'en' ? 'lvl' : 'niv.'} ${lvl})</option>`;
-      }),
+      ...ZONES.map(z =>
+        `<option value="${z.key}">${zoneDisplayName(z)} — ${FACTION_LABEL[lang][z.faction]} (${t('mobLvlPrefix')} ${z.lvl})</option>`
+      ),
     ].join('');
     zoneSelect.value = ZONES.some(z => z.key === prev) ? prev : 'all';
     zoneFilter = zoneSelect.value;

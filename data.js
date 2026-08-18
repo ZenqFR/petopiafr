@@ -64,15 +64,35 @@ function mobLevelText(mob, lang) {
   return mob;
 }
 
-// Zones Horde exclusivement, triées par niveau croissant. `match` teste la
-// chaîne `src.z` d'une source (les zones d'instance type "X (instance, Les
-// Tarides)" retombent dans la zone extérieure qui les contient).
+// Zones du menu déroulant, Horde ET neutres (chacune marquée), triées par
+// niveau croissant. `lvl` est le niveau approximatif de la zone elle-même
+// (pas celui d'une capacité). `match` teste la chaîne `src.z` d'une source
+// (les zones d'instance type "X (instance, Les Tarides)" ou "Spires de
+// Blackrock (instance)" retombent dans la zone extérieure qui les contient).
 const ZONES = [
-  { key: 'durotar', nameFr: 'Durotar', nameEn: 'Durotar', lvlFr: '1-11', lvlEn: '1-11', match: (z) => z === 'Durotar' },
-  { key: 'mulgore', nameFr: 'Mulgore', nameEn: 'Mulgore', lvlFr: '1-11', lvlEn: '1-11', match: (z) => z === 'Mulgore' },
-  { key: 'chants-eternels', nameFr: 'Bois des Chants éternels', nameEn: 'Eversong Woods', lvlFr: '1-20', lvlEn: '1-20', match: (z) => z === 'Bois des Chants éternels' },
-  { key: 'pins-argentes', nameFr: 'Forêt des Pins Argentés', nameEn: 'Silverpine Forest', lvlFr: '10-20', lvlEn: '10-20', match: (z) => z === 'Forêt des Pins Argentés' },
-  { key: 'tarides', nameFr: 'Les Tarides', nameEn: 'The Barrens', lvlFr: '10-25', lvlEn: '10-25', match: (z) => z.includes('Les Tarides') },
+  { key: 'durotar', nameFr: 'Durotar', lvl: '1-11', faction: FACTION.HORDE, match: (z) => z === 'Durotar' },
+  { key: 'mulgore', nameFr: 'Mulgore', lvl: '1-11', faction: FACTION.HORDE, match: (z) => z === 'Mulgore' },
+  { key: 'chants-eternels', nameFr: 'Bois des Chants éternels', lvl: '1-20', faction: FACTION.HORDE, match: (z) => z === 'Bois des Chants éternels' },
+  { key: 'pins-argentes', nameFr: 'Forêt des Pins Argentés', lvl: '10-20', faction: FACTION.HORDE, match: (z) => z === 'Forêt des Pins Argentés' },
+  { key: 'tarides', nameFr: 'Les Tarides', lvl: '10-25', faction: FACTION.HORDE, match: (z) => z.includes('Les Tarides') },
+  { key: 'orneval', nameFr: 'Orneval', lvl: '10-25', faction: FACTION.NEUTRE, match: (z) => z === 'Orneval' || z.includes('Blackfathom Deep') },
+  { key: 'desolace', nameFr: 'Désolace', lvl: '30-40', faction: FACTION.NEUTRE, match: (z) => z === 'Désolace' },
+  { key: 'strangleronce', nameFr: 'Vallée de Strangleronce', lvl: '30-45', faction: FACTION.NEUTRE, match: (z) => z === 'Vallée de Strangleronce' },
+  { key: 'ingrates', nameFr: 'Terres Ingrates', lvl: '35-43', faction: FACTION.NEUTRE, match: (z) => z === 'Terres Ingrates' },
+  { key: 'feralas', nameFr: 'Féralas', lvl: '38-48', faction: FACTION.NEUTRE, match: (z) => z === 'Féralas' },
+  { key: 'tanaris', nameFr: 'Tanaris', lvl: '40-50', faction: FACTION.NEUTRE, match: (z) => z === 'Tanaris' || z.includes("Zul'Farrak") },
+  { key: 'hinterlands', nameFr: 'Les Hinterlands', lvl: '40-50', faction: FACTION.NEUTRE, match: (z) => z === 'Les Hinterlands' },
+  { key: 'foudroyees', nameFr: 'Terres Foudroyées', lvl: '45-50', faction: FACTION.NEUTRE, match: (z) => z === 'Terres Foudroyées' },
+  { key: 'ungoro', nameFr: "Cratère d'Un'Goro", lvl: '48-55', faction: FACTION.NEUTRE, match: (z) => z === "Cratère d'Un'Goro" },
+  { key: 'gangrebois', nameFr: 'Gangrebois', lvl: '48-55', faction: FACTION.NEUTRE, match: (z) => z === 'Gangrebois' },
+  { key: 'ardentes', nameFr: 'Steppes Ardentes', lvl: '50-58', faction: FACTION.NEUTRE, match: (z) => z === 'Steppes Ardentes' || z.includes('Blackrock') },
+  { key: 'maleterres-est', nameFr: "Maleterres de l'Est", lvl: '51-60', faction: FACTION.NEUTRE, match: (z) => z === "Maleterres de l'Est" },
+  { key: 'berceau-hiver', nameFr: "Berceau de l'Hiver", lvl: '55-60', faction: FACTION.NEUTRE, match: (z) => z === "Berceau de l'Hiver" },
+  { key: 'flammes-infernales', nameFr: 'Péninsule des Flammes infernales', lvl: '58-63', faction: FACTION.NEUTRE, match: (z) => z === 'Péninsule des Flammes infernales' },
+  { key: 'terokkar', nameFr: 'Forêt de Terokkar', lvl: '62-65', faction: FACTION.NEUTRE, match: (z) => z === 'Forêt de Terokkar' },
+  { key: 'tranchantes', nameFr: 'Les Tranchantes', lvl: '64-67', faction: FACTION.NEUTRE, match: (z) => z === 'Les Tranchantes' },
+  { key: 'nagrand', nameFr: 'Nagrand', lvl: '64-67', faction: FACTION.NEUTRE, match: (z) => z === 'Nagrand' },
+  { key: 'ombrelune', nameFr: "Vallée d'Ombrelune", lvl: '67-70', faction: FACTION.NEUTRE, match: (z) => z === "Vallée d'Ombrelune" },
 ];
 
 // Uniquement les capacités qu'on APPREND en apprivoisant une créature qui
