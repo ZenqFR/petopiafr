@@ -426,6 +426,13 @@ table.rank-table .src-cell li { margin: 0.1rem 0; }
 }
 .site-footer p { margin: 0.3rem 0; }
 .site-footer a { color: var(--accent); }
+.footer-promo {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem !important;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.98rem;
+}
 
 @media (max-width: 560px) {
   .masthead-row { flex-direction: column; }
