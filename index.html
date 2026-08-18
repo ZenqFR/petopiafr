@@ -52,10 +52,18 @@
       <output id="level-output" for="level-range level-number" aria-hidden="false">Niveau 17</output>
     </div>
 
-    <div class="zone-control">
-      <label for="zone-select" class="zone-label" data-i18n="zoneLabel">Zone (Horde)</label>
-      <select id="zone-select"></select>
-      <p class="panel-hint zone-hint" data-i18n="zoneHint">Optionnel : limite l'affichage aux créatures d'une seule zone Horde. Combine-le avec ton niveau, ou laisse le niveau de côté et choisis juste une zone.</p>
+    <div class="filters-row">
+      <div class="zone-control">
+        <label for="zone-select" class="zone-label" data-i18n="zoneLabel">Zone (Horde)</label>
+        <select id="zone-select"></select>
+        <p class="panel-hint zone-hint" data-i18n="zoneHint">Optionnel : limite l'affichage aux créatures d'une seule zone Horde. Combine-le avec ton niveau, ou laisse le niveau de côté et choisis juste une zone.</p>
+      </div>
+
+      <div class="zone-control">
+        <label for="ability-select" class="zone-label" data-i18n="abilityLabel">Compétence</label>
+        <select id="ability-select"></select>
+        <p class="panel-hint zone-hint" data-i18n="abilityHint">Optionnel : affiche directement une seule compétence, avec tous ses rangs — pas besoin de préciser un niveau ou une zone.</p>
+      </div>
     </div>
 
     <div id="live-announcer" class="sr-only" aria-live="polite" role="status"></div>
@@ -64,6 +72,12 @@
   <section class="wrap results" id="zone-section" hidden aria-labelledby="zone-heading">
     <h2 id="zone-heading"></h2>
     <ul id="zone-list" class="card-grid" data-i18n-aria="zoneListAria" aria-label="Capacités disponibles dans la zone sélectionnée"></ul>
+  </section>
+
+  <section class="wrap results" id="ability-section" hidden aria-labelledby="ability-heading">
+    <h2 id="ability-heading"></h2>
+    <p id="ability-desc" class="panel-hint"></p>
+    <div id="ability-detail"></div>
   </section>
 
   <section class="wrap results" aria-labelledby="new-heading">
